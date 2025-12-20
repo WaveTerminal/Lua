@@ -1,0 +1,65 @@
+-- Universal ESP - Clean Mobile UI
+-- Created by WaveTerminal
+
+-- Services
+local Players = game:GetService("Players")
+local RunService = game:GetService("RunService")
+local TweenService = game:GetService("TweenService")
+local UserInputService = game:GetService("UserInputService")
+local TextService = game:GetService("TextService")
+
+-- Player
+local Player = Players.LocalPlayer
+local Mouse = Player:GetMouse()
+
+-- ESP Settings
+local ESP = {
+    Enabled = false,
+    ShowTeam = true,
+    ShowEnemy = true,
+    Names = false,
+    Distance = false,
+    Health = false,
+    Boxes = false,
+    Tracers = false,
+    HeatDots = false,
+    Theme = "Amethyst",
+    Font = "Gotham"
+}
+
+-- Color Themes
+local Themes = {
+    Amethyst = Color3.fromRGB(155, 89, 182),
+    Rose = Color3.fromRGB(231, 76, 60),
+    Black = Color3.fromRGB(45, 45, 45),
+    Red = Color3.fromRGB(231, 76, 60),
+    Green = Color3.fromRGB(46, 204, 113),
+    Blue = Color3.fromRGB(52, 152, 219)
+}
+
+-- Font Options
+local Fonts = {
+    Code = Enum.Font.Code,
+    Gotham = Enum.Font.Gotham,
+    SourceSans = Enum.Font.SourceSans,
+    Roboto = Enum.Font.GothamSemibold,
+    Arial = Enum.Font.SourceSansBold
+}
+
+-- ESP Instances Storage
+local ESPInstances = {}
+local ESPConnections = {}
+
+-- UI Variables
+local CurrentColor = Themes[ESP.Theme]
+local CurrentFont = Fonts[ESP.Font]
+local ScreenGui = nil
+local MainFrame = nil
+local ContentFrame = nil
+
+-- UI Colors
+local UIColors = {
+    Background = Color3.fromRGB(25, 25, 30),
+    Header = CurrentColor,
+    Button = Color3.fromRGB(40, 40, 45),
+    ButtonHover = Color
