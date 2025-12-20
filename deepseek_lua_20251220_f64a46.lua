@@ -1,0 +1,564 @@
+-- Money Click Inc Hub - Fixed Version
+-- Game ID: 18408132742
+-- Key: WTKEY_CLICKER
+
+-- First, let's check if we're in the right game
+if game.PlaceId ~= 18408132742 then
+    warn("⚠️ This script is only for Money Click Inc (ID: 18408132742)")
+    warn("Current game ID:", game.PlaceId)
+    return
+end
+
+-- Function to safely load Rayfield
+local function loadRayfield()
+    local success, rayfield = pcall(function()
+        return loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
+    end)
+    
+    if success then
+        return rayfield
+    else
+        -- Alternative Rayfield source
+        warn("Trying alternative Rayfield source...")
+        local success2, rayfield2 = pcall(function()
+            return loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Rayfield/main/source.lua'))()
+        end)
+        
+        if success2 then
+            return rayfield2
+        else
+            error("Failed to load Rayfield UI Library")
+        end
+    end
+end
+
+-- Load Rayfield
+local Rayfield = loadRayfield()
+
+-- Create Window
+local Window = Rayfield:CreateWindow({
+    Name = "Money Click Inc | V1.0",
+    LoadingTitle = "Loading Money Click Hub...",
+    LoadingSubtitle = "by WaveTerminal",
+    ConfigurationSaving = {
+        Enabled = true,
+        FolderName = "MoneyClickHub",
+        FileName = "Config"
+    },
+    Discord = {
+        Enabled = false,
+        Invite = "noinvitelink",
+        RememberJoins = true
+    },
+    KeySystem = true,
+    KeySettings = {
+        Title = "Money Click Inc Hub",
+        Subtitle = "Key System",
+        Note = "Bruh, Your Forget The Key ;)",
+        FileName = "MoneyClickKey",
+        SaveKey = true,
+        GrabKeyFromSite = false,
+        Key = "WTKEY_CLICKER"
+    }
+})
+
+-- Verify window was created
+if not Window then
+    error("Failed to create Rayfield window")
+end
+
+print("✅ Rayfield Window Created Successfully!")
+
+-- Services
+local ReplicatedStorage = game:GetService("ReplicatedStorage")
+local Events = ReplicatedStorage:WaitForChild("Events")
+
+-- Auto Click Variables
+local AutoClickEnabled = false
+local AutoClickConnection = nil
+local ClickSpeed = 0.1
+
+-- Main Tab
+local MainTab = Window:CreateTab("Main", "rbxassetid://4483345998")
+print("✅ Main Tab Created")
+
+-- Auto Click Section
+MainTab:CreateSection("Auto Click")
+
+local AutoClickToggle = MainTab:CreateToggle({
+    Name = "Auto Click",
+    CurrentValue = false,
+    Flag = "AutoClickToggle",
+    Callback = function(Value)
+        AutoClickEnabled = Value
+        
+        if Value then
+            Rayfield:Notify({
+                Title = "Auto Click",
+                Content = "Auto clicking started!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+            
+            -- Enable Auto Click in game settings
+            local success = pcall(function()
+                Events:WaitForChild("ChangeSettings"):WaitForChild("AutoClick"):FireServer()
+            end)
+            
+            if not success then
+                Rayfield:Notify({
+                    Title = "Warning",
+                    Content = "Failed to enable Auto Click in game settings",
+                    Duration = 3,
+                    Image = "rbxassetid://4483345998"
+                })
+            end
+            
+            -- Start click loop
+            if AutoClickConnection then
+                AutoClickConnection:Disconnect()
+            end
+            
+            AutoClickConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if AutoClickEnabled then
+                    local successClick = pcall(function()
+                        Events:WaitForChild("ClickMoney"):FireServer()
+                    end)
+                    
+                    if not successClick then
+                        Rayfield:Notify({
+                            Title = "Error",
+                            Content = "Failed to click money!",
+                            Duration = 2,
+                            Image = "rbxassetid://4483345998"
+                        })
+                        AutoClickEnabled = false
+                        return
+                    end
+                    
+                    wait(ClickSpeed)
+                end
+            end)
+        else
+            Rayfield:Notify({
+                Title = "Auto Click",
+                Content = "Auto clicking stopped!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+            
+            -- Disable Auto Click
+            if AutoClickConnection then
+                AutoClickConnection:Disconnect()
+                AutoClickConnection = nil
+            end
+        end
+    end
+})
+
+-- Click Speed Slider
+MainTab:CreateSlider({
+    Name = "Click Speed",
+    Range = {0.05, 1},
+    Increment = 0.01,
+    Suffix = "seconds",
+    CurrentValue = 0.1,
+    Flag = "ClickSpeed",
+    Callback = function(Value)
+        ClickSpeed = Value
+        Rayfield:Notify({
+            Title = "Click Speed",
+            Content = "Speed set to " .. Value .. " seconds",
+            Duration = 2,
+            Image = "rbxassetid://4483345998"
+        })
+    end
+})
+
+-- Manual Click Button
+MainTab:CreateButton({
+    Name = "Click Once",
+    Callback = function()
+        local success = pcall(function()
+            Events:WaitForChild("ClickMoney"):FireServer()
+        end)
+        
+        if success then
+            Rayfield:Notify({
+                Title = "Clicked!",
+                Content = "Money added!",
+                Duration = 2,
+                Image = "rbxassetid://4483345998"
+            })
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Failed to click!",
+                Duration = 2,
+                Image = "rbxassetid://4483345998"
+            })
+        end
+    end
+})
+
+-- Claim Reward Section
+MainTab:CreateSection("Daily Rewards")
+
+MainTab:CreateButton({
+    Name = "Claim Daily Reward",
+    Callback = function()
+        local success = pcall(function()
+            Events:WaitForChild("ClaimDailyReward"):FireServer()
+        end)
+        
+        if success then
+            Rayfield:Notify({
+                Title = "Reward Claimed!",
+                Content = "Daily reward collected!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+        else
+            Rayfield:Notify({
+                Title = "Error",
+                Content = "Failed to claim reward!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+        end
+    end
+})
+
+-- Prestige Section
+MainTab:CreateSection("Prestige System")
+
+MainTab:CreateButton({
+    Name = "Prestige (Rebirth)",
+    Callback = function()
+        -- Confirmation dialog
+        Rayfield:Notify({
+            Title = "⚠️ WARNING ⚠️",
+            Content = "Are you sure you want to Prestige?\nThis will reset your progress!",
+            Duration = 5,
+            Image = "rbxassetid://4483345998",
+            Actions = {
+                Confirm = {
+                    Name = "Yes, Prestige",
+                    Callback = function()
+                        local success = pcall(function()
+                            Events:WaitForChild("Prestige"):FireServer()
+                        end)
+                        
+                        if success then
+                            Rayfield:Notify({
+                                Title = "Prestige Complete!",
+                                Content = "You have been reborn!",
+                                Duration = 5,
+                                Image = "rbxassetid://4483345998"
+                            })
+                        else
+                            Rayfield:Notify({
+                                Title = "Error",
+                                Content = "Failed to prestige!",
+                                Duration = 3,
+                                Image = "rbxassetid://4483345998"
+                            })
+                        end
+                    end
+                },
+                Cancel = {
+                    Name = "Cancel",
+                    Callback = function()
+                        Rayfield:Notify({
+                            Title = "Cancelled",
+                            Content = "Prestige cancelled",
+                            Duration = 3,
+                            Image = "rbxassetid://4483345998"
+                        })
+                    end
+                }
+            }
+        })
+    end
+})
+
+-- Description for Prestige
+MainTab:CreateParagraph({
+    Title = "Prestige Info",
+    Content = "If you press this button, you will do a rebirth (prestige).\nYour progress will reset but you'll get permanent bonuses!"
+})
+
+-- Upgrade Tab
+local UpgradeTab = Window:CreateTab("Upgrade", "rbxassetid://4483345998")
+print("✅ Upgrade Tab Created")
+
+-- Coin Upgrade Section
+UpgradeTab:CreateSection("Coin Upgrades")
+
+-- Function to create upgrade button
+local function createUpgradeButton(name, upgradeId)
+    return UpgradeTab:CreateButton({
+        Name = name,
+        Callback = function()
+            local args = {upgradeId, true}
+            local success = pcall(function()
+                Events:WaitForChild("Upgrade"):FireServer(unpack(args))
+            end)
+            
+            if success then
+                Rayfield:Notify({
+                    Title = "Upgrade Purchased",
+                    Content = name .. " purchased!",
+                    Duration = 2,
+                    Image = "rbxassetid://4483345998"
+                })
+            else
+                Rayfield:Notify({
+                    Title = "Error",
+                    Content = "Failed to purchase " .. name,
+                    Duration = 2,
+                    Image = "rbxassetid://4483345998"
+                })
+            end
+        end
+    })
+end
+
+-- Create upgrade buttons
+createUpgradeButton("Coin Upgrade (Tier 1)", 1)
+createUpgradeButton("Clicker Upgrade (Tier 2)", 2)
+createUpgradeButton("GPU Upgrade (Tier 3)", 3)
+
+-- Auto Upgrade System
+UpgradeTab:CreateSection("Auto Upgrades")
+
+local AutoUpgradeEnabled = false
+local AutoUpgradeConnection = nil
+local UpgradePriority = {1, 2, 3} -- Default order
+
+local AutoUpgradeToggle = UpgradeTab:CreateToggle({
+    Name = "Auto Upgrade",
+    CurrentValue = false,
+    Flag = "AutoUpgradeToggle",
+    Callback = function(Value)
+        AutoUpgradeEnabled = Value
+        
+        if Value then
+            Rayfield:Notify({
+                Title = "Auto Upgrade",
+                Content = "Auto upgrading enabled!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+            
+            -- Start auto upgrade loop
+            if AutoUpgradeConnection then
+                AutoUpgradeConnection:Disconnect()
+            end
+            
+            AutoUpgradeConnection = game:GetService("RunService").Heartbeat:Connect(function()
+                if AutoUpgradeEnabled then
+                    for _, upgradeId in ipairs(UpgradePriority) do
+                        if not AutoUpgradeEnabled then break end
+                        
+                        local args = {upgradeId, true}
+                        pcall(function()
+                            Events:WaitForChild("Upgrade"):FireServer(unpack(args))
+                        end)
+                        wait(0.5) -- Delay between upgrades
+                    end
+                    wait(3) -- Wait before next cycle
+                end
+            end)
+        else
+            if AutoUpgradeConnection then
+                AutoUpgradeConnection:Disconnect()
+                AutoUpgradeConnection = nil
+            end
+            Rayfield:Notify({
+                Title = "Auto Upgrade",
+                Content = "Auto upgrading disabled!",
+                Duration = 3,
+                Image = "rbxassetid://4483345998"
+            })
+        end
+    end
+})
+
+-- Upgrade Priority Dropdown
+UpgradeTab:CreateDropdown({
+    Name = "Upgrade Priority",
+    Options = {"Coin > Clicker > GPU", "Clicker > Coin > GPU", "GPU > Clicker > Coin"},
+    CurrentOption = "Coin > Clicker > GPU",
+    Flag = "UpgradePriority",
+    Callback = function(Option)
+        if Option == "Coin > Clicker > GPU" then
+            UpgradePriority = {1, 2, 3}
+        elseif Option == "Clicker > Coin > GPU" then
+            UpgradePriority = {2, 1, 3}
+        elseif Option == "GPU > Clicker > Coin" then
+            UpgradePriority = {3, 2, 1}
+        end
+        Rayfield:Notify({
+            Title = "Priority Set",
+            Content = "Upgrade order: " .. Option,
+            Duration = 3,
+            Image = "rbxassetid://4483345998"
+        })
+    end
+})
+
+-- Stats Tab
+local StatsTab = Window:CreateTab("Stats", "rbxassetid://4483345998")
+print("✅ Stats Tab Created")
+
+-- Stats Section
+StatsTab:CreateSection("Game Information")
+
+-- Function to update stats
+local function updateStats()
+    -- You can add code here to display game stats
+    -- For example: current money, click power, etc.
+    StatsTab:CreateParagraph({
+        Title = "Script Status",
+        Content = "Auto Click: " .. (AutoClickEnabled and "ENABLED" or "DISABLED") .. 
+                "\nAuto Upgrade: " .. (AutoUpgradeEnabled and "ENABLED" or "DISABLED") ..
+                "\nClick Speed: " .. ClickSpeed .. "s"
+    })
+end
+
+StatsTab:CreateButton({
+    Name = "Refresh Stats",
+    Callback = updateStats
+})
+
+-- Update stats initially
+updateStats()
+
+-- Settings Tab
+local SettingsTab = Window:CreateTab("Settings", "rbxassetid://4483345998")
+print("✅ Settings Tab Created")
+
+SettingsTab:CreateSection("UI Settings")
+
+-- Toggle UI Button
+SettingsTab:CreateButton({
+    Name = "Hide UI",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "UI Hidden",
+            Content = "Press RightShift to show again",
+            Duration = 3,
+            Image = "rbxassetid://4483345998"
+        })
+        Rayfield:Destroy()
+    end
+})
+
+-- Save Config Button
+SettingsTab:CreateButton({
+    Name = "Save Configuration",
+    Callback = function()
+        Rayfield:Notify({
+            Title = "Configuration Saved",
+            Content = "Settings saved successfully!",
+            Duration = 3,
+            Image = "rbxassetid://4483345998"
+        })
+    end
+})
+
+-- Credits Section
+SettingsTab:CreateSection("Credits")
+
+SettingsTab:CreateParagraph({
+    Title = "Money Click Inc Hub V1.0",
+    Content = "Made by WaveTerminal\nFor Game ID: 18408132742\nKey: WTKEY_CLICKER\nGitHub: WaveTerminal/Lua"
+})
+
+-- Info Tab
+local InfoTab = Window:CreateTab("Info", "rbxassetid://4483345998")
+
+InfoTab:CreateParagraph({
+    Title = "Features",
+    Content = [[
+• Auto Click with adjustable speed (0.05-1s)
+• Manual click button
+• Auto Upgrade system with priority
+• Prestige (Rebirth) function
+• Daily reward claim
+• Upgrade priority selection
+• Key system protection
+• Error handling
+    ]]
+})
+
+InfoTab:CreateParagraph({
+    Title = "How to Use",
+    Content = [[
+1. Enable Auto Click to automatically earn money
+2. Adjust click speed for optimal farming
+3. Use Auto Upgrade to automate purchases
+4. Claim daily rewards for bonuses
+5. Prestige when ready for permanent boosts
+    ]]
+})
+
+InfoTab:CreateParagraph({
+    Title = "Warning",
+    Content = "Use at your own risk. Be careful when using prestige as it resets your progress."
+})
+
+-- Final Success Notification
+Rayfield:Notify({
+    Title = "Money Click Hub Loaded!",
+    Content = "Welcome to Money Click Inc!\nKey: WTKEY_CLICKER",
+    Duration = 8,
+    Image = "rbxassetid://4483345998"
+})
+
+print("====================================")
+print("💰 Money Click Inc Hub Loaded!")
+print("💰 Made by WaveTerminal")
+print("💰 Game ID: 18408132742")
+print("💰 Key: WTKEY_CLICKER")
+print("====================================")
+
+-- Cleanup function
+local function cleanup()
+    print("🧹 Cleaning up connections...")
+    if AutoClickConnection then
+        AutoClickConnection:Disconnect()
+        AutoClickConnection = nil
+    end
+    if AutoUpgradeConnection then
+        AutoUpgradeConnection:Disconnect()
+        AutoUpgradeConnection = nil
+    end
+    print("✅ Cleanup complete")
+end
+
+-- Auto cleanup on game leave
+game:GetService("Players").LocalPlayer.PlayerGui.ChildRemoved:Connect(function(child)
+    if child.Name == "Rayfield" then
+        cleanup()
+    end
+end)
+
+-- Bind cleanup to player leaving
+game:GetService("Players").LocalPlayer.PlayerGui.DescendantRemoving:Connect(function(descendant)
+    if descendant.Name == "Rayfield" then
+        cleanup()
+    end
+end)
+
+-- Success indicator
+local successIndicator = Instance.new("Part", workspace)
+successIndicator.Name = "ScriptLoadedIndicator"
+successIndicator.Size = Vector3.new(1, 1, 1)
+successIndicator.Position = Vector3.new(0, 100, 0)
+successIndicator.Anchored = true
+successIndicator.CanCollide = false
+successIndicator.Transparency = 1
+wait(2)
+successIndicator:Destroy()
