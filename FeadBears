@@ -1,7 +1,6 @@
--- RUN FROM FAST FREADBEAR - Ultimate Script v1.2
--- Made with Rayfield UI
+-- RUN FROM FAST FREADBEAR - Version V1.0
+-- Made By WITTY
 
--- Services
 local Players = game:GetService("Players")
 local RunService = game:GetService("RunService")
 local UserInputService = game:GetService("UserInputService")
@@ -60,8 +59,8 @@ local Rayfield = loadstring(game:HttpGet('https://sirius.menu/rayfield'))()
 -- Create Window
 local Window = Rayfield:CreateWindow({
     Name = "RUN FROM FAST FREADBEAR",
-    LoadingTitle = "Loading Ultimate Script...",
-    LoadingSubtitle = "by WITTY PROTECTED",
+    LoadingTitle = "Loading Script...",
+    LoadingSubtitle = "Made By Witty",
     ConfigurationSaving = {
         Enabled = true,
         FolderName = "FreadBearScript",
@@ -74,18 +73,18 @@ local Window = Rayfield:CreateWindow({
     },
     KeySystem = true,
     KeySettings = {
-        Title = "WITTY PROTECTED",
-        Subtitle = "KEY SYSTEM",
+        Title = "Witty Script",
+        Subtitle = "Don't Foget Like :3",
         Note = "Wait, You're forget something ?",
         FileName = "FreadBearKey",
-        SaveKey = true,
+        SaveKey = false,
         GrabKeyFromSite = false,
         Key = {"WYKEY_e59GkEWYSbWvC6NOxlKh"}
     }
 })
 
 -- Main Tab
-local MainTab = Window:CreateTab("Main", 4483362458)
+local MainTab = Window:CreateTab("Main", 2085291601)
 
 -- Hey Voice Section
 local VoiceSection = MainTab:CreateSection("Hey Voice")
@@ -103,7 +102,7 @@ local HeyButton = MainTab:CreateButton({
                     Title = "Hey Voice",
                     Content = "Successfully activated!",
                     Duration = 3,
-                    Image = 4483362458
+                    Image = 2085291601
                 })
                 Settings.LastHeyTime = os.time()
             else
@@ -111,7 +110,7 @@ local HeyButton = MainTab:CreateButton({
                     Title = "Error",
                     Content = "Failed to activate Hey Voice",
                     Duration = 3,
-                    Image = 4483362458
+                    Image = 2085291601
                 })
             end
         else
@@ -119,7 +118,7 @@ local HeyButton = MainTab:CreateButton({
                 Title = "Cooldown",
                 Content = "Please wait " .. (Settings.HeyCooldown - (os.time() - Settings.LastHeyTime)) .. " seconds",
                 Duration = 3,
-                Image = 4483362458
+                Image = 2085291601
             })
         end
     end
@@ -155,7 +154,7 @@ local HeyCooldownSlider = MainTab:CreateSlider({
 local JumpscareSection = MainTab:CreateSection("Jumpscare")
 
 local JumpscareButton = MainTab:CreateButton({
-    Name = "Delete Jumpscare Folder",
+    Name = "Removed Jumpscare",
     Callback = function()
         local success, result = pcall(function()
             ReplicatedStorage.Jumpscare:Destroy()
@@ -166,21 +165,21 @@ local JumpscareButton = MainTab:CreateButton({
                 Title = "Jumpscare",
                 Content = "Jumpscare folder deleted successfully!",
                 Duration = 5,
-                Image = 4483362458
+                Image = 2085291601
             })
         else
             Rayfield:Notify({
                 Title = "Error",
                 Content = "Failed to delete jumpscare folder",
                 Duration = 5,
-                Image = 4483362458
+                Image = 2085291601
             })
         end
     end
 })
 
 -- Movement Tab
-local MovementTab = Window:CreateTab("Movement", 4483362458)
+local MovementTab = Window:CreateTab("Movement", 2085291601)
 
 local WalkSpeedSlider = MovementTab:CreateSlider({
     Name = "WalkSpeed",
@@ -237,7 +236,7 @@ local NoclipToggle = MovementTab:CreateToggle({
 })
 
 -- Visual Tab (ESP System)
-local VisualTab = Window:CreateTab("Visual", 4483362458)
+local VisualTab = Window:CreateTab("Visual", 2085291601)
 
 -- ESP Master Control
 VisualTab:CreateSection("ESP Master Control")
@@ -349,7 +348,7 @@ local MaxDistanceSlider = VisualTab:CreateSlider({
 })
 
 -- Teleport Tab (Simplified)
-local TeleportTab = Window:CreateTab("Teleport", 4483362458)
+local TeleportTab = Window:CreateTab("Teleport", 2085291601)
 
 -- Quick Teleport Buttons only
 TeleportTab:CreateSection("Quick Teleport")
@@ -773,8 +772,8 @@ if Settings.AutoHey then
 end
 
 Rayfield:Notify({
-    Title = "WITTY PROTECTED",
+    Title = "Witty",
     Content = "Script loaded successfully!",
     Duration = 5,
-    Image = 4483362458
+    Image = 2085291601
 })
